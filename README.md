@@ -13,5 +13,6 @@ Fill these in a `.env` file
 
 # Credits
 
+- [xditya](https://github.com/xditya/BotStatus)
 - [odysseusmax](https://github.com/odysseusmax/bug-free-broccoli)
 - [Telethon](https://github.com/LonamiWebs/Telethon)
