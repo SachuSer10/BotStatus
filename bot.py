@@ -2,7 +2,7 @@ import pytz
 import logging
 import asyncio
 from decouple import config
-from datetime import datetime as dt
+from datetime import timezone, datetime as dt
 from telethon.tl.functions.messages import GetHistoryRequest
 from telethon.sessions import StringSession
 from telethon import TelegramClient
@@ -30,8 +30,9 @@ async def Stats():
             await user_bot.edit_message(int(chnl_id), msg_id, "**📈 | Real-Time Bot Status**\n\n`Performing a periodic check...`")
             c = 0
             edit_text = "**📈 | Real-Time Bot Status**\n\n"
-            for bot in bots:
+            for index, bot in enumerate(bots, start=1):
                 print(f"[INFO] checking @{bot}")
+                sent_time = dt.now(timezone.utc)
                 snt = await user_bot.send_message(bot, "/start")
                 await asyncio.sleep(10)
 
@@ -48,9 +49,11 @@ async def Stats():
                 msg = history.messages[0].id
                 if snt.id == msg:
                     print(f"@{bot} is down.")
-                    edit_text += f"🤖  @{bot}\n        └ **Down** ❌\n\n"
+                    edit_text += f"**{index}.** 🤖  @{bot}\n            └ **Offline** ❌\n\n"
                 elif snt.id + 1 == msg:
-                    edit_text += f"🤖  @{bot}\n        └ **Up** ✅\n\n"
+                    resp_msg = await user_bot.get_messages(bot, ids=msg)
+                    time_diff = (resp_msg.date - sent_time).total_seconds() * 100
+                    edit_text += f"**{index}.** 🤖  @{bot}\n            └ **Online** ✅ [__{round(time_diff, 3)}ms__]\n\n"
                 await user_bot.send_read_acknowledge(bot)
                 c += 1
                 await user_bot.edit_message(int(chnl_id), msg_id, edit_text)
