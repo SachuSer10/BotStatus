@@ -22,6 +22,7 @@ try:
     print("Started")
 except Exception as e:
     print(f"ERROR\n{str(e)}")
+    exit()
 
 async def Stats():
     async with user_bot:
